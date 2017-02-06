@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+
+<suite name="Suite1">
+    <parameter name="username" value="zah_test"/>
+    <parameter name="password" value="zzzz0000"/>
+
+    <test name="testCase_method" preserve-order="true" enabled="true">
+        <classes>
+            <class name="cn.imeixi.java.testng.MethodTest">
+                <methods>
+                    <include name="TestNGLearn3"/>
+                    <include name="TestNGLearn1"/>
+                    <include name="TestNGLearn2"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+
+    <test name="testCase_exception">
+        <classes>
+            <class name="cn.imeixi.java.testng.ExceptionTest"/>
+        </classes>
+    </test>
+
+    <test name="testCase_group">
+        <groups>
+            <define name="all">
+                <include name="systemtest"/>
+                <include name="functiontest"/>
+            </define>
+            <run>
+                <include name="all"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="cn.imeixi.java.testng.GroupTest"/>
+        </classes>
+    </test>
+
+    <test name="testCase_parameter">
+        <classes>
+            <class name="cn.imeixi.java.testng.ParameterTest"/>
+        </classes>
+    </test>
+
+    <test name="testCase_package">
+        <groups>
+            <run>
+                <include name="UItest"/>
+            </run>
+        </groups>
+        <packages>
+            <package name="cn.imeixi.java.testng"/>
+        </packages>
+    </test>
+</suite>
