@@ -3,15 +3,16 @@
 <!--默认使用testoutput任务-->
 <project basedir="." default="testoutput" name="automation test">
     <!--项目根目录-->
-    <property name="base.dir" value="D:\workspace\GitProject\TestNGDemo"/>
+    <property name="base.report.dir" value="D:\workspace\GitProject\UITest"/>
+    <property name="base.dir" value="."/>
     <!--配置结果输出地址-->
-    <property name="testng.output.dir" value="${base.dir}/result"/>
+    <property name="testng.output.dir" value="${base.dir}/test-output"/>
     <!--设置其他jar包目录-->
     <property name="lib.dir" value="${base.dir}/lib"/>
     <!--调用的testng用例执行xml文件，这里是文件名-->
     <property name="testng.file" value="${base.dir}/testng.xml"/>
     <!--设置编译的2进制文件目录-->
-    <property name="testdir" location="test"/>
+    <property name="testdir" location="${base.dir}/out"/>
 
     <!--导入testng的jar包-->
     <taskdef resource="testngtasks" classpath="${lib.dir}/testng.jar"/>
@@ -35,6 +36,7 @@
         <fileset dir="${base.dir}/lib" includes="*.jar"/>
         <pathelement location="${testdir}"/>
         <pathelement location="${base.dir}/src"/>
+
     </path>
 
     <target name="runtest" depends="compile">
@@ -44,17 +46,25 @@
         classpathref – 那些自动化测试代码的目标路径，通常就是编译完成以后的那个目标路径，例如xxx/bin；
         delegateCommandSystemProperties – 接受传递命令行参数作为系统变量，
                                         - 这个设置为true可以在调用Ant的时候通过 -Dfoo=value 把参数传递给TestNG；
-        里面还有一个xmlfileset节点，这个节点就是指定testng.xml文件的目录以及具体文件。 -->
+        里面还有一个xmlfileset节点，这个节点就是指定testng.xml文件的目录以及具体文件。 
+		useDefaultListeners  --不使用默认的报告生成器
+		listeners="org.uncommons.reportng.HTMLReporter,org.testng.reporters.FailedReporter"  --生成reportng样式的报告
+		-->
         <echo>running test</echo>
         <!--定义的testng.xml文件-->
-        <testng outputdir="test-output" classpathref="classes" delegatecommandsystemproperties="true">
-            <!--解决中文乱码问题-->
-            <jvmarg value="-Dfile.encoding=UTF-8"/>
+        <testng outputdir="${testng.output.dir}"
+                classpathref="classes"
+                delegatecommandsystemproperties="true"
+				useDefaultListeners="false"
+                listeners="org.uncommons.reportng.HTMLReporter,org.testng.reporters.FailedReporter" >
+            <!--    listeners="org.uncommons.reportng.HTMLReporter,org.uncommons.reportng.JUnitXMLReporter" > -->
+
             <!--在指定路径下，找文件名由testng.file-->
             <xmlfileset dir="${base.dir}" includes="testng.xml"/>
+            <sysproperty key="org.uncommons.reportng.title" value="AutoMation TestReport" />
+            <!--解决中文乱码问题-->
+            <jvmarg value="-Dfile.encoding=UTF-8"/>
         </testng>
-
-
     </target>
 
     <!--设置当前时间-->
@@ -67,13 +77,16 @@
     </path>
 
     <target name="testoutput" depends="runtest">
-        <xslt in="test-output/testng-results.xml" style="test-output/testng-results.xsl"
-              out="result/${CURTIME}/index.html ">
-            <param name="testNgXslt.outputDir" expression="${base.dir}/result/${CURTIME}/" />
+        <xslt in="${testng.output.dir}/testng-results.xml" style="${testng.output.dir}/testng-results.xsl"
+              out="${base.report.dir}/result/${CURTIME}/index.html ">
+            <param name="testNgXslt.outputDir" expression="${base.report.dir}/result/${CURTIME}/"/>
             <param name="testNgXslt.showRuntimeTotals" expression="true"/>
             <param name="testNgXslt.sortTestCaseLinks" expression="true"/>
             <param name="testNgXslt.testDetailsFilter" expression="FAIL,SKIP,PASS,CONF,BY_CLASS"/>
             <classpath refid="test.classpath"/>
         </xslt>
+        <echo encoding="utf-8">
+            "报告地址"：${base.report.dir}\result\${CURTIME}\index.html
+        </echo>
     </target>
 </project>

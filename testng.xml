@@ -3,6 +3,14 @@
 <suite name="Suite1">
     <parameter name="username" value="zah_test"/>
     <parameter name="password" value="zzzz0000"/>
+	
+	<!--调用reportng代替testng的报告模板-->
+    <listeners>
+        <!--生成Html格式报告-->
+        <listener class-name="org.uncommons.reportng.HTMLReporter" />
+        <!--生成JUnix格式的xml报告-->
+        <listener class-name="org.uncommons.reportng.JUnitXMLReporter" />
+    </listeners>
 
     <test name="testCase_method" preserve-order="true" enabled="true">
         <classes>
